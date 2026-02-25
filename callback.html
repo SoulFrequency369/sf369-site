@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SF369 — Authorization</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            background: #1a1610;
+            color: #f0e4ce;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            color: #d4a340;
+            margin-bottom: 10px;
+        }
+        .code-box {
+            background: #2a2520;
+            border: 2px solid #d4a340;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            word-break: break-all;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            color: #d4a340;
+            cursor: pointer;
+            position: relative;
+        }
+        .code-box:hover {
+            background: #332e28;
+        }
+        .copy-hint {
+            font-size: 12px;
+            color: #a08a6a;
+            margin-top: 8px;
+        }
+        .copied {
+            color: #6abd6a;
+            font-weight: bold;
+        }
+        .instructions {
+            color: #c0b090;
+            line-height: 1.6;
+        }
+        .error {
+            color: #d44040;
+        }
+        .brand {
+            color: #d4a340;
+            font-size: 12px;
+            margin-top: 40px;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="title">Processing...</h1>
+        <div id="content"></div>
+        <div class="brand">SOUL FREQUENCY 369</div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const error = params.get('error');
+        const errorDesc = params.get('error_description');
+        const titleEl = document.getElementById('title');
+        const contentEl = document.getElementById('content');
+
+        if (code) {
+            titleEl.textContent = 'Authorization Successful';
+            contentEl.innerHTML = `
+                <p class="instructions">Copy the code below and paste it into your terminal:</p>
+                <div class="code-box" id="codeBox" onclick="copyCode()">${code}</div>
+                <p class="copy-hint" id="copyHint">Click the code to copy it to your clipboard</p>
+                <p class="instructions">Then return to your terminal to complete the authorization.</p>
+            `;
+        } else if (error) {
+            titleEl.textContent = 'Authorization Failed';
+            titleEl.className = 'error';
+            contentEl.innerHTML = `
+                <p class="error">Error: ${error}</p>
+                ${errorDesc ? `<p class="error">${errorDesc}</p>` : ''}
+                <p class="instructions">Please close this tab and try again in the terminal.</p>
+            `;
+        } else {
+            titleEl.textContent = 'No Authorization Data';
+            contentEl.innerHTML = `
+                <p class="instructions">No authorization code was received.<br>
+                Please close this tab and try again.</p>
+            `;
+        }
+
+        function copyCode() {
+            const code = document.getElementById('codeBox').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const hint = document.getElementById('copyHint');
+                hint.textContent = 'Copied to clipboard!';
+                hint.className = 'copy-hint copied';
+            }).catch(() => {
+                // Fallback: select text
+                const range = document.createRange();
+                range.selectNode(document.getElementById('codeBox'));
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+            });
+        }
+    </script>
+</body>
+</html>
